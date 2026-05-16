@@ -1,0 +1,63 @@
+PROPRIETARY LICENSE – PERSONAL USE ONLY
+
+Computer Emulator (https://github.com/celestinalmeras/Computer-Emulator)
+Copyright (c) 2026, celestinalmeras. All rights reserved.
+
+1. Purpose
+This software (hereinafter “the Software”), along with any associated documentation,
+is provided under a proprietary license and is the exclusive property of celestinalmeras.
+
+2. Permission to use
+The user is authorized to use the Software only for personal,
+non-commercial and non-professional purposes.
+
+3. Prohibitions
+The following actions are strictly prohibited without prior written authorization from the author:
+- any commercial use, direct or indirect,
+- any modification, adaptation or creation of derivative works (except as permitted below),
+- any decompilation, reverse engineering, or extraction of the code,
+- any distribution, reproduction, sharing or dissemination of the Software,
+  in any form, unless explicit authorization is granted by the author.
+
+4. Permitted exceptions
+The following actions are allowed ONLY FOR PERSONAL USE:
+- translation of the Software (interface, documentation, messages),
+- porting the Software to other operating systems,
+  provided that:
+  - the ported Software remains NON-COMMERCIAL,
+  - no change is made to the behavior or functionality of the Software,
+  - the original license file is included,
+  - a link to the original GitHub repository is included:
+    https://github.com/celestinalmeras/Computer-Emulator
+  - the author is credited: “celestinalmeras”.
+
+5. Distribution (conditions apply)
+Distribution of the Software (or its ports/translations) is strictly prohibited
+without written authorization from the author. If the author authorizes distribution,
+the user must:
+- keep this license file unchanged,
+- include a link to the original GitHub repository:
+  https://github.com/celestinalmeras/Computer-Emulator
+- credit the author: “celestinalmeras”.
+
+6. Intellectual property
+All intellectual property rights related to the Software,
+source code, executables, configuration files, and assets,
+remain the exclusive property of the author.
+
+7. No warranty
+The Software is provided “as is”, without any express or implied warranty,
+including, but not limited to, warranties of merchantability,
+fitness for a particular purpose, or non-infringement.
+
+8. Limitation of liability
+In no event shall the author be liable for any direct,
+indirect, incidental, special or consequential damages arising from
+the use or inability to use the Software.
+
+9. Duration
+This license is valid for the entire duration of copyright protection.
+
+10. Contact
+For any authorization requests, contact the author via GitHub:
+https://github.com/celestinalmeras
