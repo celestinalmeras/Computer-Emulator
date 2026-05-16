@@ -1,0 +1,27 @@
+Architecture : [
+    data_bytes : 1,
+    address_bytes : 2
+]
+
+GPU : (1200, 560)
+Monitor : (1200, 560)
+Scale : 1
+
+IOController : [
+    0x10-0x16, 0x20 : GPU,
+    0x01 : py.virtual_output(),
+    0x05 : py.virtual_input()
+]
+
+LOAD : [
+    Cache : ("script.hex"),
+    RAM : (),
+    DISC : ()
+]
+
+CPUSpeed     : 1000
+RAMSpeed     : 5000
+CacheSpeed   : 20000
+DISCSpeed    : 200
+RegistersSpeed : 100000
+VRAMSpeed    : 10000
