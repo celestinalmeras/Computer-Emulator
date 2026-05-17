@@ -490,4 +490,4 @@ The following features are planned for future versions of the emulator:
 
 ---
 The studio that I co-created : [Github](https://github.com/Floodfield-Sudio), [Website](https://floodfield-sudio.github.io/FFS.index/)
-<img width="512" height="512" alt="floodfiled_studio-logo" src="https://github.com/user-attachments/assets/9d98849d-468d-4686-be33-59ec5a89358c" />
+<img width="24" height="24" alt="floodfiled_studio-logo" src="https://github.com/user-attachments/assets/9d98849d-468d-4686-be33-59ec5a89358c" />
