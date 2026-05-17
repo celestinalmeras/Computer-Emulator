@@ -1,4 +1,4 @@
-https://patorjk.com/software/taag/#p=display&f=Big%20Money-nw&t=Computer%20Emulator&x=none                                                                                                                               
+<img width="1118" height="170" alt="ascii-art-text" src="https://github.com/user-attachments/assets/22818ced-275e-4be4-86ee-3192e66aac3a" />                                                                                                                         
 # Computer Emulator - Complete technical documentation
 
 ## Table of Contents
