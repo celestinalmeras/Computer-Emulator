@@ -18,18 +18,18 @@ from PyQt6.QtGui import QPainter, QImage
 from PyQt6.QtCore import Qt, pyqtSignal
 
 # --- Fonctions Python pour l'IOController ---
-def virtual_output(valeur):
-    print(f"[SORTIE] Le CPU a envoyé la valeur : {valeur}")
+def virtual_output(value):
+    print(f"[OUTPUT] The CPU has sent the value : {value}")
 
 def virtual_input():
-    return int(input("[ENTRÉE] Entrez une valeur (0-255): "))
+    return int(input("[INPUT] Enter a value (0-255): "))
 
 class RGBScreenWindow(QWidget):
     frame_ready = pyqtSignal(bytes)
 
     def __init__(self, width=16, height=16, scale=20):
         super().__init__()
-        self.setWindowTitle("Moniteur GPU")
+        self.setWindowTitle("GPU Screen")
         self.setFixedSize(width * scale, height * scale)
         self.width, self.height, self.scale = width, height, scale
         self.image = QImage(width, height, QImage.Format.Format_RGB888)
@@ -156,10 +156,10 @@ def run_computer(config_file, with_screen=False, with_cli=False, with_qt=False, 
     for comp_name, files in cfg["LOAD"].items():
         obj, loader_func = loading_map[comp_name]
         offset = 0
-        print(f"\n--- Chargement {comp_name} ---")
+        print(f"\n--- Loading {comp_name} ---")
         for f in files:
             size = loader_func(f, obj, base_address=offset)
-            print(f"✅ {f} ({size} octets): chargé de 0x{offset:04X} à 0x{offset+size-1:04X}") # Emoji
+            print(f"✅ {f} ({size} bytes): loaded from 0x{offset:04X} to 0x{offset+size-1:04X}") # Emoji
             offset += size
                 
     cpu = computer.CPU(arch, ram, disc, cache, reg, alu, io_ctrl, cpu_speed=cfg["CPUSpeed"])
@@ -170,17 +170,17 @@ def run_computer(config_file, with_screen=False, with_cli=False, with_qt=False, 
         if Monitor:
             monitor = Monitor(arch, cpu, reg, ram, cache, disc, show_ram=False, step_by_step=True)
             monitor.attach()
-            print("📺 Moniteur CLI attaché.") # Emoji
+            print("📺 CLI Monitor attached.") # Emoji
         else:
-            print("⚠️ Impossible d'attacher le moniteur CLI : 'monitor.py' introuvable.") # Emoji
+            print("⚠️ Unable to attach CLI Monitor : 'monitor.py' not found.") # Emoji
 
     if with_qt:
         monitor_qt = MonitorQt(arch, cpu, reg, ram, cache, disc)
         monitor_qt.attach()
-        print("📊 Moniteur Qt attaché.") # Emoji -> Enlever peut-etre cette ligne
+        print("📊 Qt Monitor attached.") # Emoji -> Enlever peut-etre cette ligne
 
     # 5. Lancement du CPU
-    print("--- DÉMARRAGE DU CPU ---")
+    print("--- STARTING CPU ---")
     
     def target_cpu_run():
         if profile_cpu:
@@ -204,18 +204,18 @@ def run_computer(config_file, with_screen=False, with_cli=False, with_qt=False, 
 # --- GESTION DU MODE CLI (LIGNE DE COMMANDE) ---
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Simulateur de CPU modulaire.")
+    parser = argparse.ArgumentParser(description="Modular Computer Emulator")
     
     # Argument obligatoire
-    parser.add_argument("config", type=str, help="Chemin vers le fichier de configuration .pcc")
+    parser.add_argument("config", type=str, help="Path to the configuration file .pcc")
     
     # Drapeaux activables (cumulables !)
-    parser.add_argument("--screen", action="store_true", help="Activer la fenêtre d'affichage de l'écran GPU")
-    parser.add_argument("--cli", action="store_true", help="Activer le moniteur interactif dans le terminal")
-    parser.add_argument("--qt", action="store_true", help="Activer l'interface de monitoring complète MonitorQt")
+    parser.add_argument("--screen", action="store_true", help="Activate the GPU screen window")
+    parser.add_argument("--cli", action="store_true", help="Activate the interactive monitor in the terminal")
+    parser.add_argument("--qt", action="store_true", help="Activate the complete monitoring interface MonitorQt")
     
     # Profilage
-    parser.add_argument("--profile", action="store_true", help="Activer le profiling cProfile sur le CPU")
+    parser.add_argument("--profile", action="store_true", help="Activate cProfile profiling on the CPU")
 
     args = parser.parse_args()
 

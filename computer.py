@@ -737,10 +737,10 @@ class Architecture:
 
     def info(self):
         print("===== ARCHITECTURE =====")
-        print(f"Données        : {self.data_bits} bits")
-        print(f"Adresses       : {self.address_bits} bits")
-        print(f"Registres      : {self.registers_count}")
-        print(f"Endianess      : {'Little' if self.little_endian else 'Big'}")
+        print(f"Data           : {self.data_bits} bits")
+        print(f"Addresses      : {self.address_bits} bits")
+        print(f"Registers      : {self.registers_count}")
+        print(f"Endianness     : {'Little' if self.little_endian else 'Big'}")
         print(f"Data mask      : {hex(self.data_mask)}")
         print(f"Address mask   : {hex(self.address_mask)}")
         print("========================")

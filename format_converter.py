@@ -115,7 +115,7 @@ def disassembler_v4(input_data, base_address=0, data_bytes=1, address_bytes=1, f
     try:
         program = [int(b, 16) for b in input_data.strip().split()]
     except:
-        return "Erreur de parsing"
+        return "Parse error : invalid hexadecimal input"
  
     # Définition des instructions : (Nom, [Types])
     # 'R' = Registre (1 octet), 'I' = Immédit (data_bytes), 'A' = Adresse (address_bytes), 'H' = Port (1 octet)
@@ -227,34 +227,34 @@ if __name__ == "__main__":
     import os, sys
 
     parser = argparse.ArgumentParser(
-        description="Compilateur et désassembleur"
+        description="Assembler and disassembler"
     )
     
     # Argument positionnel obligatoire
-    parser.add_argument("input_file", type=str, help="Chemin du fichier source à convertir")
+    parser.add_argument("input_file", type=str, help="Path to the source file to convert")
     
     # Argument optionnel pour spécifier la sortie
-    parser.add_argument("-o", "--output", type=str, help="Chemin du fichier de sortie (optionnel)")
+    parser.add_argument("-o", "--output", type=str, help="Path to the output file (optional)")
 
     # Choix exclusif de l'action
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("-a", "--assemble", action="store_true", help="Assemble un fichier .asm en .hex ou .bin")
-    group.add_argument("-d", "--disassemble", action="store_true", help="Désassemble un fichier .hex ou .bin en .asm")
+    group.add_argument("-a", "--assemble", action="store_true", help="Assembles an .asm file into a .hex or .bin file")
+    group.add_argument("-d", "--disassemble", action="store_true", help="Disassembles a .hex or .bin file into an .asm file")
 
     # Options de configuration de l'architecture
-    parser.add_argument("--to", choices=["hex", "bin"], default="hex", help="Format cible de l'assemblage (par défaut: hex)")
-    parser.add_argument("--data-bytes", type=int, default=1, help="Nombre d'octets pour les données (par défaut: 1)")
-    parser.add_argument("--address-bytes", type=int, default=2, help="Nombre d'octets pour les adresses (par défaut: 2)")
+    parser.add_argument("--to", choices=["hex", "bin"], default="hex", help="Target format for assembly (default: hex)")
+    parser.add_argument("--data-bytes", type=int, default=1, help="Number of bytes for data (default: 1)")
+    parser.add_argument("--address-bytes", type=int, default=2, help="Number of bytes for addresses (default: 2)")
 
     args = parser.parse_args()
 
     if not os.path.exists(args.input_file):
-        print(f"Erreur : Le fichier '{args.input_file}' n'existe pas.")
+        print(f"Error: The file '{args.input_file}' does not exist.")
         sys.exit(1)
 
     # 1. MODE ASSEMBLAGE (ASM ➔ HEX / BIN)
     if args.assemble:
-        print(f"Assemblage de '{args.input_file}'...")
+        print(f"Assembling '{args.input_file}'...")
         try:
             asm_content = load(args.input_file)
             result = assembler_v4(
@@ -271,15 +271,15 @@ if __name__ == "__main__":
                 output_path = f"{base}.{args.to}"
             
             write(output_path, result)
-            print(f"Fichier assemblé avec succès dans : {output_path}")
+            print(f"File assembled successfully into: {output_path}")
             
         except Exception as e:
-            print(f"Erreur lors de l'assemblage : {e}")
+            print(f"Error during assembly: {e}")
             sys.exit(1)
 
     # 2. MODE DÉSASSEMBLAGE (HEX / BIN -> ASM)
     elif args.disassemble:
-        print(f"Désassemblage de '{args.input_file}'...")
+        print(f"Disassembling '{args.input_file}'...")
         try:
             program_bytes = []
             
@@ -310,8 +310,8 @@ if __name__ == "__main__":
                 output_path = f"{base}_disassembled.asm"
                 
             write(output_path, asm_result)
-            print(f"Fichier désassemblé avec succès dans : {output_path}")
+            print(f"File disassembled successfully into: {output_path}")
             
         except Exception as e:
-            print(f"Erreur lors du désassemblage : {e}")
+            print(f"Error during disassembly: {e}")
             sys.exit(1)

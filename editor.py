@@ -49,11 +49,11 @@ from PyQt6.QtCore import (
 )
 
 # =========================================================
-# Convertisseur ASM ↔ HEX ↔ BIN
-# (import depuis format_converter.py)
+# Convertisseur ASM - HEX - BIN
 # =========================================================
 
 from format_converter import assembler_v4, disassembler_v4
+
 # =========================================================
 # Utilitaire
 # =========================================================
@@ -417,17 +417,17 @@ class FileTreeView(QTreeView):
         if index.isValid():
             path   = self.model().filePath(index)
             is_dir = os.path.isdir(path)
-            action_open = menu.addAction("Ouvrir")
+            action_open = menu.addAction("Open")
             action_open.triggered.connect(lambda: self.main_window.open_file_from_sidebar(index))
             menu.addSeparator()
-            action_rename = menu.addAction("Renommer  (F2)")
+            action_rename = menu.addAction("Rename  (F2)")
             action_rename.triggered.connect(lambda: self.main_window.rename_item(index))
-            action_delete = menu.addAction("Supprimer  (Suppr)")
+            action_delete = menu.addAction("Delete  (Delete)")
             action_delete.triggered.connect(lambda: self.main_window.delete_item(index))
             menu.addSeparator()
 
-        menu.addAction("Nouveau fichier").triggered.connect(self.main_window.create_new_file)
-        menu.addAction("Nouveau dossier").triggered.connect(self.main_window.create_new_folder)
+        menu.addAction("New File").triggered.connect(self.main_window.create_new_file)
+        menu.addAction("New Folder").triggered.connect(self.main_window.create_new_folder)
         menu.exec(self.viewport().mapToGlobal(pos))
 
     # ── Drag & Drop ──────────────────────────────────────────
@@ -461,8 +461,8 @@ class FileTreeView(QTreeView):
                 continue
             if os.path.exists(dst):
                 reply = QMessageBox.question(
-                    self, "Conflit",
-                    f"'{name}' existe déjà. Remplacer ?",
+                    self, "Conflict",
+                    f"'{name}' already exists. Replace ?",
                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
                 )
                 if reply != QMessageBox.StandardButton.Yes:
@@ -475,7 +475,7 @@ class FileTreeView(QTreeView):
                 errors.append(f"{name} : {e}")
 
         if errors:
-            QMessageBox.critical(self, "Erreurs de déplacement", "\n".join(errors))
+            QMessageBox.critical(self, "Errors", "\n".join(errors))
         event.acceptProposedAction()
 
     def mimeData(self, indexes):
@@ -494,7 +494,7 @@ class FileTreeView(QTreeView):
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("PyCode IDE")
+        self.setWindowTitle("Computer Emulator IDE")
         self.resize(1400, 900)
 
         self.file_model = QFileSystemModel()
@@ -517,12 +517,12 @@ class MainWindow(QWidget):
 
         sidebar_tools = QHBoxLayout()
         sidebar_tools.setContentsMargins(10, 5, 10, 5)
-        btn_new_file   = QPushButton("Nouveau fichier")
-        btn_new_folder = QPushButton("Nouveau dossier")
-        btn_save       = QPushButton("Sauvegarder")
-        btn_new_file.setToolTip("Nouveau fichier")
-        btn_new_folder.setToolTip("Nouveau dossier")
-        btn_save.setToolTip("Sauvegarder (Ctrl+S)")
+        btn_new_file   = QPushButton("New File")
+        btn_new_folder = QPushButton("New Folder")
+        btn_save       = QPushButton("Save")
+        btn_new_file.setToolTip("New File")
+        btn_new_folder.setToolTip("New Folder")
+        btn_save.setToolTip("Save (Ctrl+S)")
         btn_new_file.clicked.connect(self.create_new_file)
         btn_new_folder.clicked.connect(self.create_new_folder)
         btn_save.clicked.connect(self.save_current_file)
@@ -571,9 +571,9 @@ class MainWindow(QWidget):
             btn.setObjectName("conv_btn")
             top_bar_layout.addWidget(btn)
 
-        btn_asm_hex.setToolTip("Assembler le code ASM de l'onglet actif en HEX")
-        btn_hex_bin.setToolTip("Convertir le HEX de l'onglet actif en binaire")
-        btn_asm_bin.setToolTip("Assembler directement le code ASM en binaire")
+        btn_asm_hex.setToolTip("Assemble the ASM code of the active tab into HEX")
+        btn_hex_bin.setToolTip("Convert the HEX of the active tab into binary")
+        btn_asm_bin.setToolTip("Assemble the ASM code directly into binary")
         btn_asm_hex.clicked.connect(lambda: self.run_conversion("asm_hex"))
         btn_hex_bin.clicked.connect(lambda: self.run_conversion("hex_bin"))
         btn_asm_bin.clicked.connect(lambda: self.run_conversion("asm_bin"))
@@ -587,10 +587,10 @@ class MainWindow(QWidget):
         self.pcc_path_edit.setObjectName("pcc_edit")
         self.pcc_path_edit.setReadOnly(True)
         self.pcc_path_edit.setFixedWidth(200)
-        self.pcc_path_edit.setPlaceholderText("Aucun fichier sélectionné")
+        self.pcc_path_edit.setPlaceholderText("No file selected")
         btn_browse = QPushButton("📂") # Emoji
         btn_browse.setObjectName("run_btn")
-        btn_browse.setToolTip("Sélectionner un fichier .pcc")
+        btn_browse.setToolTip("Select a .pcc file")
         btn_browse.setFixedWidth(30)
         btn_browse.clicked.connect(self.browse_pcc)
 
@@ -606,9 +606,9 @@ class MainWindow(QWidget):
             btn.setObjectName("run_btn")
             top_bar_layout.addWidget(btn)
 
-        btn_run.setToolTip("Exécuter le(s) programme(s)")
-        btn_run_mon.setToolTip("Exécuter en mode monitor")
-        btn_run_qt.setToolTip("Exécuter en mode Qt monitor")
+        btn_run.setToolTip("Run the program")
+        btn_run_mon.setToolTip("Run in monitor mode")
+        btn_run_qt.setToolTip("Run in Qt monitor mode")
         btn_run.clicked.connect(lambda: self.run_main())
         btn_run_mon.clicked.connect(lambda: self.run_main(monitor=True))
         btn_run_qt.clicked.connect(lambda: self.run_main(qt=True))
@@ -649,7 +649,7 @@ class MainWindow(QWidget):
         main_layout.addWidget(self.splitter)
         main_layout.addWidget(self.horizontal_slider)
 
-        self.add_new_tab("Bienvenue", "# Bienvenue dans l'éditeur !\n")
+        self.add_new_tab("Welcome", "# Welcome to the editor !\n")
         self.apply_style()
 
         # Raccourci Ctrl+S
@@ -660,7 +660,7 @@ class MainWindow(QWidget):
 
     def browse_pcc(self):
         path, _ = QFileDialog.getOpenFileName(
-            self, "Sélectionner un fichier .pcc", "", "PCC Files (*.pcc);;All Files (*)"
+            self, "Select a .pcc file", "", "PCC Files (*.pcc);;All Files (*)"
         )
         if path:
             self.pcc_path_edit.setText(path)
@@ -668,12 +668,12 @@ class MainWindow(QWidget):
     def run_main(self, monitor=False, qt=False):
         pcc = self.pcc_path_edit.text().strip()
         if not pcc:
-            QMessageBox.warning(self, "Aucun fichier .pcc", "Veuillez d'abord sélectionner un fichier .pcc.")
+            QMessageBox.warning(self, "No .pcc file", "Please select a .pcc file first.")
             return
 
         # Nettoyer la console avant le lancement
         self.console.clear()
-        self.console.appendPlainText("-> Démarrage du sous-processus de l'émulateur...\n")
+        self.console.appendPlainText("-> Starting the emulator subprocess...\n")
 
         self.process = QProcess(self)
         
@@ -720,7 +720,7 @@ class MainWindow(QWidget):
             return
         content = editor.toPlainText().strip()
         if not content:
-            QMessageBox.warning(self, "Onglet vide", "L'onglet actif ne contient aucun contenu à convertir.")
+            QMessageBox.warning(self, "No content to convert", "The active tab contains no content to convert.")
             return
 
         src_name = self.tabs.tabText(self.tabs.currentIndex())
@@ -749,7 +749,7 @@ class MainWindow(QWidget):
             else:
                 return
         except Exception as e:
-            QMessageBox.critical(self, "Erreur de conversion", str(e))
+            QMessageBox.critical(self, "Conversion Error", str(e))
             return
 
         out_path = None
@@ -761,7 +761,7 @@ class MainWindow(QWidget):
                 with open(out_path, "w", encoding="utf-8") as f:
                     f.write(result)
             except Exception as e:
-                QMessageBox.warning(self, "Erreur d'écriture", f"Impossible d'écrire le fichier sur le disque : {e}")
+                QMessageBox.warning(self, "Write Error", f"Unable to write the file to disk : {e}")
 
         self.add_new_tab(out_name, result, ext=out_ext, file_path=out_path)
 
@@ -774,8 +774,8 @@ class MainWindow(QWidget):
         path = getattr(editor, "file_path", None)
         if not path:
             QMessageBox.information(
-                self, "Aucun fichier associé",
-                "Cet onglet n'est lié à aucun fichier sur le disque."
+                self, "No file associated",
+                "This tab is not associated with any file on the disk."
             )
             return
         try:
@@ -787,7 +787,7 @@ class MainWindow(QWidget):
             if tab_name.endswith(" *"):
                 self.tabs.setTabText(idx, tab_name[:-2])
         except Exception as e:
-            QMessageBox.critical(self, "Erreur de sauvegarde", str(e))
+            QMessageBox.critical(self, "Save Error", str(e))
 
     # ── Fichiers ────────────────────────────────────────────
 
@@ -799,40 +799,40 @@ class MainWindow(QWidget):
         return self.root_path
 
     def create_new_file(self):
-        name, ok = QInputDialog.getText(self, "Nouveau Fichier", "Nom du fichier :")
+        name, ok = QInputDialog.getText(self, "New File", "File name:")
         if ok and name:
             target = os.path.join(self.get_current_directory(), name)
             try:
                 open(target, 'w').close()
                 self.add_new_tab(name, "", file_path=target)
             except Exception as e:
-                QMessageBox.critical(self, "Erreur", f"Impossible de créer le fichier : {e}")
+                QMessageBox.critical(self, "Error", f"Unable to create the file : {e}")
 
     def create_new_folder(self):
-        name, ok = QInputDialog.getText(self, "Nouveau Dossier", "Nom du dossier :")
+        name, ok = QInputDialog.getText(self, "New Folder", "Folder name:")
         if ok and name:
             try:
                 os.makedirs(os.path.join(self.get_current_directory(), name), exist_ok=True)
             except Exception as e:
-                QMessageBox.critical(self, "Erreur", f"Impossible de créer le dossier : {e}")
+                QMessageBox.critical(self, "Error", f"Unable to create the folder : {e}")
 
     def rename_item(self, index):
         if not index.isValid():
             return
         old_path   = self.file_model.filePath(index)
         old_name   = os.path.basename(old_path)
-        new_name, ok = QInputDialog.getText(self, "Renommer", "Nouveau nom :", text=old_name)
+        new_name, ok = QInputDialog.getText(self, "Rename", "New name:", text=old_name)
         if not ok or not new_name or new_name == old_name:
             return
         new_path = os.path.join(os.path.dirname(old_path), new_name)
         if os.path.exists(new_path):
-            QMessageBox.warning(self, "Conflit", f"'{new_name}' existe déjà.")
+            QMessageBox.warning(self, "Conflit", f"'{new_name}' already exists.")
             return
         try:
             os.rename(old_path, new_path)
             self.update_tabs_after_move(old_path, new_path)
         except Exception as e:
-            QMessageBox.critical(self, "Erreur", f"Impossible de renommer : {e}")
+            QMessageBox.critical(self, "Error", f"Unable to rename : {e}")
 
     def delete_item(self, index):
         if not index.isValid():
@@ -840,9 +840,9 @@ class MainWindow(QWidget):
         path   = self.file_model.filePath(index)
         name   = os.path.basename(path)
         is_dir = os.path.isdir(path)
-        kind   = "le dossier" if is_dir else "le fichier"
+        kind   = "the folder" if is_dir else "the file"
         if QMessageBox.question(
-            self, "Confirmer la suppression",
+            self, "Confirm Deletion",
             f"Supprimer définitivement {kind} « {name} » ?",
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
         ) != QMessageBox.StandardButton.Yes:
@@ -851,7 +851,7 @@ class MainWindow(QWidget):
             (shutil.rmtree if is_dir else os.remove)(path)
             self.close_tabs_for_path(path)
         except Exception as e:
-            QMessageBox.critical(self, "Erreur", f"Impossible de supprimer : {e}")
+            QMessageBox.critical(self, "Error", f"Unable to delete : {e}")
 
     # ── Onglets ─────────────────────────────────────────────
 

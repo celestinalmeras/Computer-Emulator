@@ -25,12 +25,12 @@ def load(path: str) -> bytes:
                     value = int(token, 16)
                 except ValueError:
                     raise HexLoaderError(
-                        f"Ligne {lineno} : token invalide '{token}' "
-                        f"(attendu : octet hexadécimal 00–FF)"
+                        f"Line {lineno} : invalid token '{token}' "
+                        f"(expected : hexadecimal byte 00–FF)"
                     )
                 if not (0x00 <= value <= 0xFF):
                     raise HexLoaderError(
-                        f"Ligne {lineno} : valeur {token!r} hors plage (00–FF)"
+                        f"Line {lineno} : value {token!r} out of range (00–FF)"
                     )
                 result.append(value)
 

@@ -1,5 +1,5 @@
 import os
-
+import time
 # =========================
 # COULEURS ANSI
 # =========================
@@ -38,7 +38,7 @@ def _bar(value, max_value, width=16, fill="█", empty="░"):
 # =========================
 
 def _display_registers(reg, arch):
-    print(f"{_C.BOLD}{_C.BG_BLUE}{_C.WHITE}  REGISTRES  {_C.RESET}")
+    print(f"{_C.BOLD}{_C.BG_BLUE}{_C.WHITE}  REGISTERS  {_C.RESET}")
     print()
 
     for i in range(arch.registers_count):
@@ -117,7 +117,7 @@ def _display_disc(disc, cols=16):
     print()
 
     # pointeur courant
-    print(f"  {_C.DIM}pointeur : {_C.RESET}{_C.YELLOW}{disc.pointer:#06x}{_C.RESET} {_C.DIM}({disc.pointer}){_C.RESET}")
+    print(f"  {_C.DIM}pointer : {_C.RESET}{_C.YELLOW}{disc.pointer:#06x}{_C.RESET} {_C.DIM}({disc.pointer}){_C.RESET}")
     print()
 
     # en-tête colonnes
@@ -142,7 +142,7 @@ def _display_disc(disc, cols=16):
                 line += "   "
         print(line)
 
-    print(f"\n  {_C.DIM}▲ {_C.MAGENTA}●{_C.RESET}{_C.DIM} = position du pointeur{_C.RESET}")
+    print(f"\n  {_C.DIM}▲ {_C.MAGENTA}●{_C.RESET}{_C.DIM} = pointer position{_C.RESET}")
 
 
 # =========================
@@ -221,13 +221,30 @@ class Monitor:
         self._original_step = self.cpu.step
 
         monitor = self  # référence capturée dans la closure
+        
+        print(r"""
+        #######################################################################################################################################################################
+         $$$$$$\                                                $$\                               $$$$$$$$\                         $$\            $$\                         
+        $$  __$$\                                               $$ |                              $$  _____|                        $$ |           $$ |                        
+        $$ /  \__| $$$$$$\  $$$$$$\$$$$\   $$$$$$\  $$\   $$\ $$$$$$\    $$$$$$\   $$$$$$\        $$ |      $$$$$$\$$$$\  $$\   $$\ $$ | $$$$$$\ $$$$$$\    $$$$$$\   $$$$$$\  
+        $$ |      $$  __$$\ $$  _$$  _$$\ $$  __$$\ $$ |  $$ |\_$$  _|  $$  __$$\ $$  __$$\       $$$$$\    $$  _$$  _$$\ $$ |  $$ |$$ | \____$$\\_$$  _|  $$  __$$\ $$  __$$\ 
+        $$ |      $$ /  $$ |$$ / $$ / $$ |$$ /  $$ |$$ |  $$ |  $$ |    $$$$$$$$ |$$ |  \__|      $$  __|   $$ / $$ / $$ |$$ |  $$ |$$ | $$$$$$$ | $$ |    $$ /  $$ |$$ |  \__|
+        $$ |  $$\ $$ |  $$ |$$ | $$ | $$ |$$ |  $$ |$$ |  $$ |  $$ |$$\ $$   ____|$$ |            $$ |      $$ | $$ | $$ |$$ |  $$ |$$ |$$  __$$ | $$ |$$\ $$ |  $$ |$$ |      
+        \$$$$$$  |\$$$$$$  |$$ | $$ | $$ |$$$$$$$  |\$$$$$$  |  \$$$$  |\$$$$$$$\ $$ |            $$$$$$$$\ $$ | $$ | $$ |\$$$$$$  |$$ |\$$$$$$$ | \$$$$  |\$$$$$$  |$$ |      
+        \______/  \______/ \__| \__| \__|$$  ____/  \______/    \____/  \_______|\__|            \________|\__| \__| \__| \______/ \__| \_______|  \____/  \______/ \__|      
+                                        $$ |                                                                                                                                 
+                                        $$ |                                                                                                                                 
+                                        \__|                                                                                                                                 
+        #######################################################################################################################################################################
+        """)
+        time.sleep(1)  # pause pour que l'utilisateur puisse lire le message de bienvenue
 
         def instrumented_step():
             monitor._original_step()
             monitor._step_count += 1
             monitor.display()
             if monitor.step_by_step:
-                input(f"\n  {_C.DIM}[Entrée pour continuer...]{_C.RESET} ")
+                input(f"\n  {_C.DIM}[Enter to continue...]{_C.RESET} ")
 
         self.cpu.step = instrumented_step
 
@@ -244,7 +261,7 @@ class Monitor:
         width = 60
         print()
         print(f"{_C.BOLD}{_C.BG_BLUE}{_C.WHITE}{'':=<{width}}{_C.RESET}")
-        print(f"{_C.BOLD}{_C.BG_BLUE}{_C.WHITE}{'  MONITEUR CPU — STEP #' + str(self._step_count):<{width}}{_C.RESET}")
+        print(f"{_C.BOLD}{_C.BG_BLUE}{_C.WHITE}{'  Computer Monitor — STEP #' + str(self._step_count):<{width}}{_C.RESET}")
         print(f"{_C.BOLD}{_C.BG_BLUE}{_C.WHITE}{'':=<{width}}{_C.RESET}")
         print()
 

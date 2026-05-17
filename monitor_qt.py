@@ -1,14 +1,3 @@
-"""
-monitor_qt.py — Moniteur CPU temps réel (PyQt6)
-Supporte : navigation step-by-step, retour arrière, play/pause, slider, vitesse.
-
-Usage :
-    from monitor_qt import Monitor
-
-    monitor = Monitor(arch, cpu, reg, ram, cache, disc=disc)
-    monitor.attach()   # lance la fenêtre — bloquant jusqu'à fermeture
-"""
-
 import sys
 import threading
 from PyQt6.QtWidgets import (
@@ -123,9 +112,9 @@ QSplitter::handle {{ background-color: {BORDER}; }}
 """
 
 
-# ══════════════════════════════════════════════
+# ==============================================
 #  HELPERS
-# ══════════════════════════════════════════════
+# ==============================================
 
 def _mono(size=11):
     f = QFont("JetBrains Mono", size)
@@ -199,9 +188,9 @@ def get_instruction_name(opcode: int) -> str:
         }
     return instructions_map.get(opcode, f"UNKNOWN ({hex(opcode)})")
 
-# ══════════════════════════════════════════════
+# ==============================================
 #  SNAPSHOT  (capture complète de l'état)
-# ══════════════════════════════════════════════
+# ==============================================
 
 class Snapshot:
     def __init__(self, reg, ram, cache, disc, step: int):
@@ -241,13 +230,13 @@ class Snapshot:
             disc.pointer   = self.disc_pointer
 
 
-# ══════════════════════════════════════════════
+# ==============================================
 #  PANNEAU REGISTRES
-# ══════════════════════════════════════════════
+# ==============================================
 
 class _RegistersPanel(QGroupBox):
     def __init__(self, arch):
-        super().__init__("REGISTRES")
+        super().__init__("REGISTERS")
         self.arch   = arch
         self._bars  = []
         self._vals  = []
@@ -291,9 +280,9 @@ class _RegistersPanel(QGroupBox):
         self._specials["FL"].setText(f"{snap.FLAGS:04b}b  ({snap.FLAGS})")
 
 
-# ══════════════════════════════════════════════
+# ==============================================
 #  PANNEAU FLAGS
-# ══════════════════════════════════════════════
+# ==============================================
 
 class _FlagsPanel(QGroupBox):
     _DEFS = [(0,"Z","Zero"),(1,"C","Carry"),(2,"N","Negative"),(3,"O","Overflow")]
@@ -318,9 +307,9 @@ class _FlagsPanel(QGroupBox):
             led.setStyleSheet(f"color:{''+GREEN if active else RED}; background:transparent;")
 
 
-# ══════════════════════════════════════════════
+# ==============================================
 #  PANNEAU MÉMOIRE GÉNÉRIQUE
-# ══════════════════════════════════════════════
+# ==============================================
 
 class _MemoryPanel(QGroupBox):
     def __init__(self, title, size, cols=16, has_pointer=False):
@@ -359,9 +348,9 @@ class _MemoryPanel(QGroupBox):
         self._prev = mem_bytes
 
 
-# ══════════════════════════════════════════════
+# ==============================================
 #  PANNEAU CACHE
-# ══════════════════════════════════════════════
+# ==============================================
 
 class _CachePanel(QGroupBox):
     def __init__(self, cache_size):
@@ -386,9 +375,9 @@ class _CachePanel(QGroupBox):
             self._table.setItem(i, 3, _item(ds, FG if any(data) else FG_DIM))
 
 
-# ══════════════════════════════════════════════
+# ==============================================
 #  BARRE DE NAVIGATION
-# ══════════════════════════════════════════════
+# ==============================================
 
 class _NavBar(QWidget):
     sig_first = pyqtSignal()
@@ -464,9 +453,9 @@ class _NavBar(QWidget):
         self._btn_last.setEnabled(has_next or cpu_running)
 
 
-# ══════════════════════════════════════════════
+# ==============================================
 #  BARRE D'ÉTAT
-# ══════════════════════════════════════════════
+# ==============================================
 
 class _StatusBar(QWidget):
     def __init__(self):
@@ -567,7 +556,7 @@ class _MonitorWindow(QMainWindow):
 
     def apply(self, snap: Snapshot, hist_len: int, cpu_running: bool, at_live: bool):
         instr_name = get_instruction_name(snap.IR)
-        self.instruction_label.setText(f"Dernière instruction exécutée : {instr_name}  (Opcode: {snap.IR:#04x})")
+        self.instruction_label.setText(f"Last instruction executed : {instr_name}  (Opcode: {snap.IR:#04x})")
         
         self.reg_panel.refresh(snap)
         self.flag_panel.refresh(snap)
