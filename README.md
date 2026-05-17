@@ -354,6 +354,7 @@ This section documents the complete ISA (Instruction Set Architecture) of the CP
 START:
     MOV R0, 1
     JMP START
+```
 ### 5. Stack
 
 | Opcode | Instruction | Description |
@@ -374,7 +375,6 @@ START:
 | `0x70` | `MTC_REG addr, Rn` | Register `Rn` → Cache `[addr]` |
 | `0x71` | `MTC_RAM addr` | RAM `[addr]` → Cache `[addr]` |
 | `0x72` | `MFC Rn, addr` | Cache `[addr]` → Register `Rn` |
-```
 
 ### 7. GPU Subsystem
 
