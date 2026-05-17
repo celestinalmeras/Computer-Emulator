@@ -487,3 +487,6 @@ The following features are planned for future versions of the emulator:
 - Support for multiple languages in the emulator interface and tooling.
 - Addition of a comprehensive set of example programs to help users learn and test the system.
 - Implementation of multi-core CPU support to allow parallel instruction execution and improved performance.
+
+
+The studio that I co-created : [Github](https://github.com/Floodfield-Sudio), [Website](https://floodfield-sudio.github.io/FFS.index/)
