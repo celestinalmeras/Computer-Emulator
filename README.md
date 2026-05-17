@@ -478,3 +478,12 @@ pip install PyQt6
 | `shutil` | File utilities |
 
 > **Python ≥ 3.10** is required.
+
+
+### Future Improvements
+
+The following features are planned for future versions of the emulator:
+
+- Support for multiple languages in the emulator interface and tooling.
+- Addition of a comprehensive set of example programs to help users learn and test the system.
+- Implementation of multi-core CPU support to allow parallel instruction execution and improved performance.
