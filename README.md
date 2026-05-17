@@ -347,6 +347,13 @@ This section documents the complete ISA (Instruction Set Architecture) of the CP
 | `0x49` | `CALL addr` | Saves PC onto the stack and jumps to `addr` (function call). |
 | `0x4A` | `RET` | Pops the return address from the stack and resumes execution (return from function). |
 
+- **Symbolic labels**: programs can use named labels instead of hardcoded addresses, improving readability and simplifying code maintenance.
+
+**Example — draw a red pixel at (3, 5):**
+```asm
+START:
+    MOV R0, 1
+    JMP START
 ### 5. Stack
 
 | Opcode | Instruction | Description |
@@ -367,6 +374,7 @@ This section documents the complete ISA (Instruction Set Architecture) of the CP
 | `0x70` | `MTC_REG addr, Rn` | Register `Rn` → Cache `[addr]` |
 | `0x71` | `MTC_RAM addr` | RAM `[addr]` → Cache `[addr]` |
 | `0x72` | `MFC Rn, addr` | Cache `[addr]` → Register `Rn` |
+```
 
 ### 7. GPU Subsystem
 
