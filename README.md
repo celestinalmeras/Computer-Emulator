@@ -291,84 +291,113 @@ The disassembler performs a two-pass analysis: it first identifies all jump targ
 
 ## Instruction Set Reference
 
-A PDF document **[NAME_FILE]** is included in this repository and describes every instruction in detail: its mnemonic, opcode (hex), operands, flags affected, and a description of its behavior. It is the authoritative reference for programming this CPU.
+This section documents the complete ISA (Instruction Set Architecture) of the CPU. All opcodes are 1 byte. Operand widths depend on the `data_bytes` and `address_bytes` values set in your `.pcc`.
 
-Below is a quick summary of the available instructions by category.
+### 1. System & Control
 
-### Data Movement
-
-| Mnemonic | Opcode | Description |
+| Opcode | Instruction | Description |
 |---|---|---|
-| `MOV Rd, Rs` | `10` | Copy register to register |
-| `MOV Rd, Imm` | `11` | Load immediate value into register |
-| `MOV Rd, [Rb+Off]` | `15` | Load from memory at base register + offset |
-| `LOAD Rd, Addr` | `12` | Load from absolute memory address |
-| `LOAD Rd, [Rs]` | `14` | Load from address stored in register |
-| `STORE Rs, Addr` | `13` | Store register to absolute memory address |
-| `PUSH Rs` | `50` | Push register onto stack |
-| `POP Rd` | `51` | Pop top of stack into register |
+| `0x00` | `NOP` | No Operation. Does nothing for one cycle. |
+| `0xFF` | `HLT` | Halt. Stops CPU execution. |
 
-### Arithmetic & Logic
+### 2. Data Transfer
 
-| Mnemonic | Opcode | Description |
+| Opcode | Instruction | Description |
 |---|---|---|
-| `ADD Rd, Rs` | `20` | Rd = Rd + Rs |
-| `ADDI Rd, Imm` | `21` | Rd = Rd + Imm |
-| `SUB Rd, Rs` | `22` | Rd = Rd − Rs |
-| `MUL Rd, Rs` | `26` | Rd = Rd × Rs |
-| `AND Rd, Rs` | `30` | Rd = Rd AND Rs |
-| `ANDI Rd, Imm` | `32` | Rd = Rd AND Imm |
-| `OR Rd, Rs` | `31` | Rd = Rd OR Rs |
-| `XOR Rd, Rs` | `27` | Rd = Rd XOR Rs |
-| `NOT Rd` | `33` | Rd = NOT Rd |
-| `SHL Rd` | `34` | Shift Rd left by 1 |
-| `SHR Rd` | `35` | Shift Rd right by 1 |
-| `CMP Rd, Rs` | `28` | Set flags from Rd − Rs (no store) |
-| `CMP Rd, Imm` | `29` | Set flags from Rd − Imm (no store) |
+| `0x10` | `MOV Rn, Rm` | Copies the content of register `Rm` into `Rn`. |
+| `0x11` | `MOV Rn, imm` | Loads the immediate value `imm` into `Rn`. |
+| `0x12` | `LOAD Rn, [addr]` | Reads the value in RAM at address `addr` and stores it in `Rn`. |
+| `0x13` | `STORE [addr], Rn` | Writes the content of `Rn` to RAM at address `addr`. |
+| `0x14` | `LOAD Rn, [Rm]` | Indirect: loads into `Rn` the value at the memory address stored in `Rm`. |
+| `0x15` | `MOV Rn, [Rm + off]` | Indexed: computes address `(Rm + offset)` and loads the value found there into `Rn`. |
 
-### Control Flow
+### 3. Arithmetic & Logic (ALU)
 
-| Mnemonic | Opcode | Description |
+> These operations (except `CMP`) update the status flags: **Z** (Zero), **C** (Carry), **N** (Negative), **O** (Overflow).
+
+| Opcode | Instruction | Description |
 |---|---|---|
-| `JMP Addr` | `40` | Unconditional jump |
-| `JZ Addr` | `41` | Jump if Zero flag set |
-| `JNZ Addr` | `42` | Jump if Zero flag not set |
-| `JC Addr` | `43` | Jump if Carry flag set |
-| `JNC Addr` | `44` | Jump if Carry flag not set |
-| `JN Addr` | `45` | Jump if Negative flag set |
-| `JNN Addr` | `46` | Jump if Negative flag not set |
-| `JO Addr` | `47` | Jump if Overflow flag set |
-| `JNO Addr` | `48` | Jump if Overflow flag not set |
-| `CALL Addr` | `49` | Push PC, jump to subroutine |
-| `RET` | `4A` | Pop PC, return from subroutine |
+| `0x20` | `ADD Rn, Rm` | Rn = Rn + Rm |
+| `0x21` | `ADDI Rn, imm` | Rn = Rn + imm |
+| `0x22` | `SUB Rn, Rm` | Rn = Rn − Rm |
+| `0x26` | `MUL Rn, Rm` | Rn = Rn × Rm |
+| `0x27` | `XOR Rn, Rm` | Bitwise XOR between `Rn` and `Rm`. |
+| `0x28` | `CMP Rn, Rm` | Virtually subtracts `Rm` from `Rn` to update flags only (result not stored). |
+| `0x29` | `CMP Rn, imm` | Virtually subtracts `imm` from `Rn` to update flags only (result not stored). |
+| `0x30` | `AND Rn, Rm` | Bitwise AND between `Rn` and `Rm`. |
+| `0x31` | `OR Rn, Rm` | Bitwise OR between `Rn` and `Rm`. |
+| `0x32` | `ANDI Rn, imm` | Bitwise AND between `Rn` and immediate `imm`. |
+| `0x33` | `NOT Rn` | Inverts all bits of `Rn`. |
+| `0x34` | `SHL Rn` | Shift Left: shifts bits left by 1 (equivalent to × 2). |
+| `0x35` | `SHR Rn` | Shift Right: shifts bits right by 1 (equivalent to ÷ 2). |
 
-### I/O
+### 4. Branches & Subroutines
 
-| Mnemonic | Opcode | Description |
+| Opcode | Instruction | Condition / Description |
 |---|---|---|
-| `IN Port, Rd` | `60` | Read from I/O port into register |
-| `OUT Port, Rs` | `61` | Write register to I/O port |
-| `IN_RAM Port, Rd` | `62` | Read from I/O port into RAM address stored in Rd |
-| `OUT_RAM Port, Rs` | `63` | Write from RAM address stored in Rs to I/O port |
-| `IN_CACHE Port, Rd` | `64` | Read from I/O port into Cache |
-| `OUT_CACHE Port, Rs` | `65` | Write from Cache to I/O port |
+| `0x40` | `JMP addr` | Unconditional jump to `addr`. |
+| `0x41` | `JZ addr` | Jump if Zero flag (Z) = 1. |
+| `0x42` | `JNZ addr` | Jump if Zero flag (Z) = 0. |
+| `0x43` | `JC addr` | Jump if Carry flag (C) = 1. |
+| `0x44` | `JNC addr` | Jump if Carry flag (C) = 0. |
+| `0x45` | `JN addr` | Jump if Negative flag (N) = 1. |
+| `0x46` | `JNN addr` | Jump if Negative flag (N) = 0. |
+| `0x47` | `JO addr` | Jump if Overflow flag (O) = 1. |
+| `0x48` | `JNO addr` | Jump if Overflow flag (O) = 0. |
+| `0x49` | `CALL addr` | Saves PC onto the stack and jumps to `addr` (function call). |
+| `0x4A` | `RET` | Pops the return address from the stack and resumes execution (return from function). |
 
-### Cache Control
+### 5. Stack
 
-| Mnemonic | Opcode | Description |
+| Opcode | Instruction | Description |
 |---|---|---|
-| `MTC_REG Rd, Imm` | `70` | Move To Cache from register at cache line Imm |
-| `MTC_RAM Port` | `71` | Move To Cache from RAM |
-| `MFC Rd, Imm` | `72` | Move From Cache line Imm into register Rd |
+| `0x50` | `PUSH Rn` | Pushes the value of `Rn` onto the stack. |
+| `0x51` | `POP Rn` | Pops the top of the stack into `Rn`. |
 
-### Misc
+### 6. I/O & Cache
 
-| Mnemonic | Opcode | Description |
+| Opcode | Instruction | Data flow |
 |---|---|---|
-| `NOP` | `00` | No operation |
-| `HLT` | `FF` | Halt the CPU |
+| `0x60` | `IN Rn, port` | Peripheral → Register `Rn` |
+| `0x61` | `OUT port, Rn` | Register `Rn` → Peripheral |
+| `0x62` | `IN_RAM addr, port` | Peripheral → RAM `[addr]` |
+| `0x63` | `OUT_RAM port, addr` | RAM `[addr]` → Peripheral |
+| `0x64` | `IN_CACHE addr, port` | Peripheral → Cache `[addr]` |
+| `0x65` | `OUT_CACHE port, addr` | Cache `[addr]` → Peripheral |
+| `0x70` | `MTC_REG addr, Rn` | Register `Rn` → Cache `[addr]` |
+| `0x71` | `MTC_RAM addr` | RAM `[addr]` → Cache `[addr]` |
+| `0x72` | `MFC Rn, addr` | Cache `[addr]` → Register `Rn` |
 
-> For full details on operand encoding, flag effects, and cycle costs, refer to **[NAME_FILE]**.
+### 7. GPU Subsystem
+
+The GPU listens on dedicated I/O ports to manage an n×n pixel display. Write to these ports using `OUT` instructions before triggering a draw command.
+
+| Port | Register | Description |
+|---|---|---|
+| `0x10` | X | Pixel X coordinate |
+| `0x11` | Y | Pixel Y coordinate |
+| `0x12` | R | Red channel (0–255) |
+| `0x13` | G | Green channel (0–255) |
+| `0x14` | B | Blue channel (0–255) |
+| `0x15` | CMD | Command: `1` = `DRAW_PIXEL`, `2` = `CLEAR_SCREEN` |
+
+**Example — draw a red pixel at (3, 5):**
+```asm
+MOV R0, 3
+OUT 0x10, R0   ; X = 3
+
+MOV R0, 5
+OUT 0x11, R0   ; Y = 5
+
+MOV R0, 255
+OUT 0x12, R0   ; R = 255
+MOV R0, 0
+OUT 0x13, R0   ; G = 0
+OUT 0x14, R0   ; B = 0
+
+MOV R0, 1
+OUT 0x15, R0   ; CMD = DRAW_PIXEL
+```
 
 ---
 
@@ -416,15 +445,28 @@ python emulator.py my_machine.pcc --profile
 
 ## Dependencies
 
+### External packages
+
 | Package | Purpose |
 |---|---|
 | `PyQt6` | GUI windows: GPU screen, Qt debugger, code editor |
-| `Python ≥ 3.10` | f-strings, `match`/`case`, and type hints used throughout |
-
-Install all dependencies:
 
 ```bash
 pip install PyQt6
 ```
 
-No other external packages are required. The assembler, disassembler, monitor, and emulator core are all pure Python.
+### Standard library (no installation required)
+
+| Module | Purpose |
+|---|---|
+| `sys` | Command-line arguments, application exit |
+| `os` | Terminal clearing, file path handling |
+| `re` | Parsing `.pcc` config files |
+| `argparse` | CLI argument parsing for `emulator.py` and `format_converter.py` |
+| `threading` | Running the CPU in a background thread alongside the GUI |
+| `inspect` | Detecting I/O callback signatures (read vs write) |
+| `cProfile` | CPU performance profiling (`--profile` flag) |
+| `time` | Component speed delays, monitor startup pause |
+| `shutil` | File utilities |
+
+> **Python ≥ 3.10** is required.
