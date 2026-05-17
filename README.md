@@ -423,8 +423,8 @@ You can wire any port to a Python function defined in `emulator.py`:
 
 ```python
 # Write callback — called when the CPU executes OUT 0x10, Rx
-def virtual_output(valeur):
-    print(f"[OUTPUT] CPU sent: {valeur}")
+def virtual_output(value):
+    print(f"[OUTPUT] CPU sent: {value}")
 
 # Read callback — called when the CPU executes IN 0x11, Rx
 def virtual_input():
